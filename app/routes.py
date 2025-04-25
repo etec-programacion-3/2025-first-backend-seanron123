@@ -23,7 +23,7 @@ def crear_libro():
     return jsonify({'message': 'Libro creado exitosamente!'}), 201
 
 # Obtener todos los libros
-@libro_bp.route('', methods=['GET'])
+@libro_bp.route('/', methods=['GET'])
 def obtener_libros():
     libros = Libro.query.all()
     libros_data = [

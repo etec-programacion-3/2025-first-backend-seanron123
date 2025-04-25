@@ -1,50 +1,63 @@
+### Variables
 @baseUrl = http://localhost:5000
 @contentType = application/json
 
-### Obtener todos los libros
-GET {{baseUrl}}/libros
+### Obtener todos los productos
+GET {{baseUrl}}/libros/
 Content-Type: {{contentType}}
 
-### Obtener un libro específico por ID
+### Obtener un producto específico por ID
 GET {{baseUrl}}/libros/1
 Content-Type: {{contentType}}
 
-### Crear un nuevo libro
+### Crear un nuevo producto
 POST {{baseUrl}}/libros
 Content-Type: {{contentType}}
 
 {
-    "titulo": "Cien años de soledad",
-    "autor": "Gabriel García Márquez",
-    "isbn": "9788497592208",
-    "categoria": "Novela",
-    "estado": "disponible"
-}
-
-### Actualizar un libro existente
-PUT {{baseUrl}}/libros/1
-Content-Type: {{contentType}}
-
-{
-    "titulo": "Cien años de soledad (Edición Aniversario)",
-    "autor": "Gabriel García Márquez",
-    "isbn": "9788497592208",
-    "categoria": "Novela",
+    "titulo": " El Alquimista",
+    "autor": "Paulo Coelho",
+    "isbn": "978-3-16-148410-0",
+    "categoria": "Ficción",
     "estado": "prestado"
 }
 
-### Eliminar un libro
+### Eliminar un producto
 DELETE {{baseUrl}}/libros/1
 Content-Type: {{contentType}}
 
-### Ejemplos adicionales de creación de libros
+### Ejemplos adicionales de creación de productos
 POST {{baseUrl}}/libros
 Content-Type: {{contentType}}
 
 {
-    "titulo": "El Principito",
-    "autor": "Antoine de Saint-Exupéry",
-    "isbn": "9780156012195",
-    "categoria": "Fábula",
+    "titulo": "Don Quijote de la Mancha",
+    "autor": "Miguel de Cervantes",
+    "isbn": "978-3-16-148410-1",
+    "categoria": "Novela Clásica",
     "estado": "disponible"
 }
+
+###
+POST {{baseUrl}}/libros
+Content-Type: {{contentType}}
+
+{
+    "titulo": "1984",
+    "autor": "George Orwell",
+    "isbn": "978-3-16-148410-2",
+    "categoria": "Distopía",
+    "estado": "prestado"
+}
+
+###
+POST {{baseUrl}}/libros
+Content-Type: {{contentType}}
+
+{
+    "titulo": "El Gran Gatsby",
+    "autor": "F. Scott Fitzgerald",
+    "isbn": "978-3-16-148410-3",
+    "categoria": "Ficción",
+    "estado": "disponible"
+} 
