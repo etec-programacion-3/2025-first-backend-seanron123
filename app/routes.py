@@ -12,8 +12,8 @@ def crear_libro():
     nuevo_libro = Libro(
         titulo=data['titulo'],
         autor=data['autor'],
-        isbn=data['isbn'],
-        categoria=data['categoria'],
+        isbn=data.get('isbn', ''),             # Evitar error si no envían
+        categoria=data.get('categoria', ''),
         estado=data.get('estado', 'disponible')
     )
 
@@ -62,8 +62,8 @@ def actualizar_libro(id):
 
     libro.titulo = data['titulo']
     libro.autor = data['autor']
-    libro.isbn = data['isbn']
-    libro.categoria = data['categoria']
+    libro.isbn = data.get('isbn', libro.isbn)
+    libro.categoria = data.get('categoria', libro.categoria)
     libro.estado = data.get('estado', libro.estado)
 
     db.session.commit()

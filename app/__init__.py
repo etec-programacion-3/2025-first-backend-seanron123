@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from app.routes import libro_bp  
 from app.database import db
 from app.usuarios_routes import usuario_bp
@@ -13,6 +14,9 @@ def create_app():
 
     # Inicializar SQLAlchemy
     db.init_app(app)
+
+    # Activar CORS para todo el backend
+    CORS(app)
 
     # Registrar el blueprint
     app.register_blueprint(libro_bp)

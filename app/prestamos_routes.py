@@ -58,3 +58,4 @@ def obtener_prestamos():
         } for p in prestamos
     ]
     return jsonify(prestamos_data)
+    

@@ -22,10 +22,6 @@ Content-Type: {{contentType}}
     "estado": "prestado"
 }
 
-### Eliminar un producto
-DELETE {{baseUrl}}/libros/1
-Content-Type: {{contentType}}
-
 ### Ejemplos adicionales de creación de productos
 POST {{baseUrl}}/libros
 Content-Type: {{contentType}}

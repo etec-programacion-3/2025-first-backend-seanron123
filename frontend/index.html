@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Biblioteca Escolar - Libros</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body class="bg-light min-vh-100 d-flex flex-column align-items-center justify-content-center">
+  <div class="container p-4 bg-white rounded shadow" style="max-width: 700px;">
+    <h1 class="mb-4 text-center">Gestión de Libros</h1>
+
+    <form id="form-libro" class="row g-2 mb-3">
+      <div class="col-md-3">
+        <input type="number" id="id" class="form-control" placeholder="ID" required />
+      </div>
+      <div class="col-md-3">
+        <input type="text" id="titulo" class="form-control" placeholder="Título" required />
+      </div>
+      <div class="col-md-3">
+        <input type="text" id="autor" class="form-control" placeholder="Autor" required />
+      </div>
+      <div class="col-md-3 d-flex align-items-center">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="disponible" />
+          <label class="form-check-label" for="disponible">Disponible</label>
+        </div>
+      </div>
+      <div class="col-12 d-flex gap-2">
+        <button type="submit" class="btn btn-primary flex-fill">Agregar</button>
+        <button type="button" id="btn-cancelar" class="btn btn-secondary flex-fill d-none">Cancelar edición</button>
+      </div>
+    </form>
+
+    <div class="table-responsive">
+      <table class="table table-striped" id="tabla-libros">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Disponible</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div id="mensaje" class="mt-2"></div>
+  </div>
+
+  <script>
+    const baseUrl = 'http://localhost:5000/libros';
+
+    const tabla = document.querySelector('#tabla-libros tbody');
+    const form = document.getElementById('form-libro');
+    const inputId = document.getElementById('id');
+    const inputTitulo = document.getElementById('titulo');
+    const inputAutor = document.getElementById('autor');
+    const inputDisponible = document.getElementById('disponible');
+    const btnCancelar = document.getElementById('btn-cancelar');
+    const mensaje = document.getElementById('mensaje');
+
+    let editId = null;
+
+    function mostrarMensaje(texto, tipo = 'success') {
+      mensaje.innerHTML = `<div class="alert alert-${tipo} py-2">${texto}</div>`;
+      setTimeout(() => (mensaje.innerHTML = ''), 2500);
+    }
+
+    async function cargarLibros() {
+      tabla.innerHTML = '<tr><td colspan="5">Cargando...</td></tr>';
+      try {
+        const res = await fetch(baseUrl);
+        const libros = await res.json();
+        tabla.innerHTML = '';
+        libros.forEach((libro) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${libro.id}</td>
+            <td>${libro.titulo}</td>
+            <td>${libro.autor}</td>
+            <td>${libro.disponible === undefined || libro.disponible === false ? 'No' : 'Sí'}</td>
+            <td>
+              <button class="btn btn-sm btn-warning me-2" onclick="editarLibro(${libro.id}, '${libro.titulo.replace(/'/g, "&#39;")}', '${libro.autor.replace(/'/g, "&#39;")}', ${libro.disponible})">Editar</button>
+              <button class="btn btn-sm btn-danger" onclick="eliminarLibro(${libro.id})">Eliminar</button>
+            </td>
+          `;
+          tabla.appendChild(tr);
+        });
+      } catch (err) {
+        tabla.innerHTML = '<tr><td colspan="5">Error al cargar libros</td></tr>';
+      }
+    }
+
+    form.onsubmit = async function (e) {
+      e.preventDefault();
+      const libro = {
+        id: parseInt(inputId.value),
+        titulo: inputTitulo.value.trim(),
+        autor: inputAutor.value.trim(),
+        disponible: inputDisponible.checked,
+      };
+
+      try {
+        let res;
+        if (editId !== null) {
+          res = await fetch(`${baseUrl}/${editId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(libro),
+          });
+          mostrarMensaje('Libro actualizado');
+        } else {
+          res = await fetch(baseUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(libro),
+          });
+          mostrarMensaje('Libro agregado');
+        }
+        if (!res.ok) throw new Error('Error en la petición');
+        form.reset();
+        editId = null;
+        btnCancelar.classList.add('d-none');
+        cargarLibros();
+      } catch (err) {
+        mostrarMensaje('Error al guardar libro', 'danger');
+      }
+    };
+
+    window.editarLibro = function (id, titulo, autor, disponible) {
+      editId = id;
+      inputId.value = id;
+      inputTitulo.value = titulo;
+      inputAutor.value = autor;
+      inputDisponible.checked = disponible;
+      btnCancelar.classList.remove('d-none');
+    };
+
+    btnCancelar.onclick = function () {
+      editId = null;
+      form.reset();
+      btnCancelar.classList.add('d-none');
+    };
+
+    window.eliminarLibro = async function (id) {
+      if (!confirm('¿Seguro que deseas eliminar este libro?')) return;
+      try {
+        const res = await fetch(`${baseUrl}/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Error al eliminar');
+        mostrarMensaje('Libro eliminado');
+        cargarLibros();
+      } catch (err) {
+        mostrarMensaje('Error al eliminar libro', 'danger');
+      }
+    };
+
+    cargarLibros();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
